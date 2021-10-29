@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human API</title>
+
+</head>
+
+<body>
+    Human API:
+
+    <select id="vitals">
+        <option value="bloodGlucose">bloodGlucose</option>
+        <option value="bloodOxygen">bloodOxygen</option>
+        <option value="bloodPressure">bloodPressure</option>
+        <option value="bmi">bmi</option>
+        <option value="bodyFat">bodyFat</option>
+    </select>
+    <button id="demo-data-button">Get Vitals</button>
+    <p id="result"></p>
+    <script>
+        let query = ''
+        document.getElementById('vitals')
+            .addEventListener('change', e => {
+                query = e.target.value
+            })
+
+        document.getElementById('demo-data-button')
+            .addEventListener('click', async () => {
+                const response = await fetch(`/demo?name=${query}`)
+                const json = await response.json()
+                if (json.error) {
+                    console.error(json.error)
+                } else {
+                    const p = document.getElementById('result')
+                    const vitals = json.body
+
+                    const vitalsList = createVitalsList(vitals)
+                    p.innerHTML = ''
+                    p.append(vitalsList)
+
+                }
+            })
+
+        function createVitalsList(vitals) {
+            const ul = document.createElement('ul')
+
+            for (const vital in vitals) {
+                const li = document.createElement('li')
+                const pName = document.createElement('p')
+                const pValue = document.createElement('p')
+                pName.append(vital)
+                pValue.append(vitals[vital])
+                li.append(pName, pValue)
+                ul.append(li)
+            }
+            return ul
+        }
+
+    </script>
+</body>
+
+</html>
